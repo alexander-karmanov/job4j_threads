@@ -10,40 +10,52 @@ public class Wget implements Runnable {
     private final String url;
     private final int speed;
 
-    public Wget(String url, int speed) {
+    private String fileName;
+
+    public Wget(String url, int speed, String fileName) {
         this.url = url;
         this.speed = speed;
+        this.fileName = fileName;
     }
 
     @Override
     public void run() {
         try {
-            downloadFile(url, speed);
+            downloadFile(url, speed, fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void downloadFile(String url, int speed) throws IOException {
-        var out = new File("temp.txt");
+    private void downloadFile(String url, int speed, String fileName) throws IOException {
+        var out = fileName;
+
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(out)) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
             long startTime = System.currentTimeMillis();
+            long totalBytesRead = 0;
 
             while ((bytesRead = in.read(dataBuffer)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+                totalBytesRead += bytesRead;
+
                 long finish = System.currentTimeMillis();
                 long duration = finish - startTime;
-                if (duration < speed) {
-                    long sleepTime = speed - duration;
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.out.println("Скачивание прервано.");
+
+                    if (totalBytesRead >= speed) {
+                        if (duration < 1000) {
+                            try {
+                                Thread.sleep(1000 - duration);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                System.out.println("Скачивание прервано.");
+                                return;
+                            }
                     }
+                    totalBytesRead = 0;
+
                 }
                 startTime = System.currentTimeMillis();
             }
@@ -51,12 +63,13 @@ public class Wget implements Runnable {
     }
 
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             throw new IllegalArgumentException("Not enough parameters.");
         }
         String url = args[0];
         int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new Wget(url, speed));
+        String fileName = args[2];
+        Thread wget = new Thread(new Wget(url, speed, fileName));
         wget.start();
         try {
             wget.join();
