@@ -42,9 +42,9 @@ public class Wget implements Runnable {
                 totalBytesRead += bytesRead;
 
                 long finish = System.currentTimeMillis();
-                long duration = finish - startTime;
 
                     if (totalBytesRead >= speed) {
+                        long duration = finish - startTime;
                         if (duration < 1000) {
                             try {
                                 Thread.sleep(1000 - duration);
@@ -55,9 +55,8 @@ public class Wget implements Runnable {
                             }
                     }
                     totalBytesRead = 0;
-
+                    startTime = System.currentTimeMillis();
                 }
-                startTime = System.currentTimeMillis();
             }
         }
     }
