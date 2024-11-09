@@ -53,9 +53,9 @@ public class Wget implements Runnable {
                                 System.out.println("Скачивание прервано.");
                                 return;
                             }
+                            totalBytesRead = 0;
+                            startTime = System.currentTimeMillis();
                     }
-                    totalBytesRead = 0;
-                    startTime = System.currentTimeMillis();
                 }
             }
         }
