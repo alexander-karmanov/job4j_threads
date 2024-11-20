@@ -57,6 +57,6 @@ public class AccountStorageTest {
                 .orElseThrow(() -> new IllegalStateException("Not found account by id = 1"));
         assertThat(firstAccount.amount()).isEqualTo(50);
         assertThat(secondAccount.amount()).isEqualTo(0);
-        assertThat(storage.transfer(1,2, 100)).isFalse();
+        assertThat(storage.transfer(1, 2, 100)).isFalse();
     }
 }
