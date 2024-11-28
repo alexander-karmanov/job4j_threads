@@ -38,4 +38,8 @@ public final class SimpleBlockingQueue<T> {
             return result;
         }
     }
+
+    public synchronized boolean isEmpty() {
+        return queue.isEmpty();
+    }
 }
