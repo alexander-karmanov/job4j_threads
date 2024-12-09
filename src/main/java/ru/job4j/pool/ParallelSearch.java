@@ -18,6 +18,7 @@ public class ParallelSearch<T> extends RecursiveTask<Integer> {
         this.end = end;
     }
 
+
     @Override
     protected Integer compute() {
         int length = end - start;
@@ -45,12 +46,8 @@ public class ParallelSearch<T> extends RecursiveTask<Integer> {
         return -1;
     }
 
-    public static void main(String[] args) {
-        ForkJoinPool pool = new ForkJoinPool();
-        Integer[] array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-        Integer target = 7;
-        ParallelSearch<Integer> task = new ParallelSearch<>(array, target, 0, array.length);
-        Integer index = pool.invoke(task);
-        System.out.println("Индекс элемента " + target + ": " + index);
+    public static <T> Integer search(T[] array, T target) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        return forkJoinPool.invoke(new ParallelSearch<>(array, target, 0, array.length));
     }
 }
